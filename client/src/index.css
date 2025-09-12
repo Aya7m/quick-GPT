@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=Outfit:wght@100..900&family=Winky+Rough:ital,wght@0,300..900;1,300..900&display=swap');
+
+@import "tailwindcss";
+
+*{
+    font-family: "Winky Rough", sans-serif;
+}
+
+@theme {
+  --color-bg-light: #fdfdfd;
+  --color-bg-dark: #1a1a1a;
+  --color-text-light: #111827;
+  --color-text-dark: #f9fafb;
+}
+.light {
+  background-color: var(--color-bg-light);
+  color: var(--color-text-light);
+}
+.dark {
+  background-color: var(--color-bg-dark);
+  color: var(--color-text-dark);
+}
+
+.reset-tw:not(pre):not(code){
+  all:revert
+}
+.loader div:nth-child(2) {
+  animation-delay: 0,2s;
+}
+.loader div:nth-child(3) {
+  animation-delay: 0,4s;
+}
