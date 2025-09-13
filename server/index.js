@@ -11,14 +11,18 @@ import { stripeWebhook } from './controller/webhook.js'
 dotenv.config()
 
 const app = express()
-app.use(cors())
-app.use(express.json())
+
 const port = process.env.PORT
+app.use(cors())
 
 connectDB()
 
 // stripe webhook
 app.post('/api/stripe', express.raw({type:'application/json'}),stripeWebhook)
+
+
+
+app.use(express.json())
 
 app.use('/api/user',userRouter)
 app.use('/api/chat',chatRoute)
