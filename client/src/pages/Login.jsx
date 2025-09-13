@@ -1,4 +1,9 @@
 import React, { useState } from "react";
+import axios from "axios"; // ← استدعاء مباشر
+import { useAppContext } from "../context/Appcontext";
+import toast from "react-hot-toast";
+
+axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
 
 const Login = () => {
   const [state, setState] = useState("login");
@@ -6,15 +11,43 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { setToken, fetchUserChats } = useAppContext(); // هنسيب الباقي من الكونتكست
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const url = state === "login" ? "/api/user/login" : "/api/user/register";
+
+    try {
+      const res = await axios.post(url, { name, email, password });
+      console.log("Full Response:", res);
+
+      const data = res?.data;
+      console.log("Data:", data);
+
+      if (data?.success === true) {
+        toast.success(data.message);
+        setToken(data.token);
+        localStorage.setItem("token", data.token);
+        fetchUserChats();
+      } else {
+        toast.error(data?.message || "Unexpected error");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Server error");
+    }
   };
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-gray-500 rounded-lg shadow-xl border border-gray-200 bg-white"
+    >
       <p className="text-2xl font-medium m-auto">
         <span className="text-purple-700">User</span>{" "}
         {state === "login" ? "Login" : "Sign Up"}
       </p>
+
       {state === "register" && (
         <div className="w-full">
           <p>Name</p>
@@ -28,7 +61,8 @@ const Login = () => {
           />
         </div>
       )}
-      <div className="w-full ">
+
+      <div className="w-full">
         <p>Email</p>
         <input
           onChange={(e) => setEmail(e.target.value)}
@@ -39,7 +73,8 @@ const Login = () => {
           required
         />
       </div>
-      <div className="w-full ">
+
+      <div className="w-full">
         <p>Password</p>
         <input
           onChange={(e) => setPassword(e.target.value)}
@@ -50,6 +85,7 @@ const Login = () => {
           required
         />
       </div>
+
       {state === "register" ? (
         <p>
           Already have account?{" "}
@@ -71,7 +107,11 @@ const Login = () => {
           </span>
         </p>
       )}
-      <button type="submit" className="bg-purple-500 hover:bg-purple-600 transition-all text-white w-full py-2 rounded-md cursor-pointer">
+
+      <button
+        type="submit"
+        className="bg-purple-500 hover:bg-purple-600 transition-all text-white w-full py-2 rounded-md cursor-pointer"
+      >
         {state === "register" ? "Create Account" : "Login"}
       </button>
     </form>

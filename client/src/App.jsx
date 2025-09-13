@@ -10,13 +10,14 @@ import "./assets/prism.css";
 import Loading from "./pages/Loading";
 import { useAppContext } from "./context/Appcontext";
 import Login from "./pages/Login";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { user } = useAppContext();
+  const { user,loadUser } = useAppContext();
   const [ismenuOpen, setIsmenuOpen] = useState(false);
   const { pathname } = useLocation();
 
-  if (pathname === "/loading") return <Loading />;
+  if (pathname === "/loading" ||loadUser) return <Loading />;
 
   return (
     <>
@@ -48,6 +49,7 @@ const App = () => {
           </div>
         )}
       </div>
+      <Toaster/>
     </>
   );
 };

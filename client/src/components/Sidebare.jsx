@@ -2,12 +2,47 @@ import React, { useState } from "react";
 import { useAppContext } from "../context/Appcontext";
 import { assets } from "../assets/assets";
 import moment from "moment/moment";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
-  const { chats, setSelectChat, theme, navigate, user, setTheme } =
+  const { chats, setSelectChat, theme, navigate, user, setTheme,createNewChat,loadUser,setChats,fetchUserChats,setToken,token } =
     useAppContext();
   const [search, setSearch] = useState("");
   console.log("Search icon path:", assets.search_icon);
+
+  // logout function
+  const handleLogout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    toast.success("Logged out successfully");
+    navigate("/login");
+
+  };
+  // delete chat function
+ 
+  const handleDeleteChat = async (e,chatId) => {
+  e.stopPropagation();
+  const confirm = window.confirm("Are you sure you want to delete this chat?");
+  if(!confirm) return;
+  try {
+    const res = await axios.delete(`/api/chat/delete`, {
+      data: { chatId },
+      headers: { Authorization: token }
+    });
+
+    if(res?.data.success){
+      toast.success(res.data.message);
+      setChats(chats.filter((chat) => chat._id !== chatId));
+      await fetchUserChats();
+    }else{
+      toast.error(res.data.message);
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message);
+  }
+}
+
 
   return (
     <div
@@ -23,7 +58,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
       />
 
       {/* new chat box */}
-      <button className="flex items-center justify-center w-full mt-5 mb-3 p-3 text-white bg-gradient-to-r from-[#A456F7] to-[#3D81F6] rounded-lg hover:opacity-90 transition-opacity duration-300">
+      <button onClick={createNewChat} className="flex items-center justify-center w-full mt-5 mb-3 p-3 text-white bg-gradient-to-r from-[#A456F7] to-[#3D81F6] rounded-lg hover:opacity-90 transition-opacity duration-300">
         <span className="mr-2 text-xl">+</span>New Chat
       </button>
 
@@ -83,6 +118,11 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
                 src={assets.bin_icon}
                 alt="Delete"
                 className="hidden group-hover:block w-4 cursor-pointer not-dark:invert"
+                onClick={e => toast.promise(handleDeleteChat(e,chat._id),{
+                  loading:"Deleting chat...",
+                  success:"Chat deleted successfully",
+                  error:"Failed to delete chat"
+                })}
               />
             </div>
           ))}
@@ -157,7 +197,7 @@ const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
       dark:border-white/15 rounded-md cursor-pointer group">
         <img src={assets.user_icon} className="w-7 rounded-full" alt="" />
         <p className="flex-1 text-sm dark:text-primary truncate">{user?user.name:"Login Your Account"}</p>
-        {user&&<img src={assets.logout_icon} className="h-5 cursor-pointer hidden group-hover:block not-dark:invert"/>}
+        {user&&<img onClick={handleLogout} src={assets.logout_icon} className="h-5 cursor-pointer hidden group-hover:block not-dark:invert"/>}
 
       </div>
 

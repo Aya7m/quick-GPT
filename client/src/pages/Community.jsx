@@ -1,14 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { dummyPublishedImages } from "../assets/assets";
+
 import Loading from "./Loading";
+
+import toast from "react-hot-toast";
+import { useAppContext } from "../context/Appcontext";
 
 const Community = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { axios } = useAppContext();
 
   const fetchImages = async () => {
-    setImages(dummyPublishedImages);
-    setLoading(false);
+    try {
+      const res = await axios.get("/api/user/publishedImages");
+      console.log("res community", res.data);
+      
+      if (res?.data.success) {
+        setImages(res.data.publishedImageMessages);
+
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -22,7 +39,7 @@ const Community = () => {
         community images
       </h2>
 
-      {images.length > 0 ? (
+      {images?.length > 0 ? (
         <div className="flex flex-wrap max-sm:justify-center gap-5">
           {images.map((item, index) => (
             <a
