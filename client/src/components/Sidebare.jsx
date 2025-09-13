@@ -3,10 +3,10 @@ import { useAppContext } from "../context/Appcontext";
 import { assets } from "../assets/assets";
 import moment from "moment/moment";
 import toast from "react-hot-toast";
-import axios from "axios";
+// import axios from "axios";
 
 const Sidebar = ({isMenuOpen, setIsMenuOpen}) => {
-  const { chats, setSelectChat, theme, navigate, user, setTheme,createNewChat,loadUser,setChats,fetchUserChats,setToken,token } =
+  const { chats, setSelectChat, theme, navigate, user, setTheme,createNewChat,loadUser,setChats,fetchUserChats,setToken,token,axios } =
     useAppContext();
   const [search, setSearch] = useState("");
   console.log("Search icon path:", assets.search_icon);

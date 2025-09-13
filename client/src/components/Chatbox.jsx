@@ -4,12 +4,12 @@ import { assets } from "../assets/assets";
 import { useAppContext } from "../context/Appcontext";
 import Message from "./Message";
 import toast from "react-hot-toast";
-import axios from "axios";
+
 
 const Chatbox = () => {
   const containerRef = useRef(null);
 
-  const { selectChat, theme, user, setUser, token } = useAppContext();
+  const { selectChat, theme, user, setUser, token ,axios} = useAppContext();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 

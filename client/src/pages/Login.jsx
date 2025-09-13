@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // ← استدعاء مباشر
+// import axios from "axios"; // ← استدعاء مباشر
 import { useAppContext } from "../context/Appcontext";
 import toast from "react-hot-toast";
 
@@ -11,7 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setToken, fetchUserChats } = useAppContext(); // هنسيب الباقي من الكونتكست
+  const { setToken, fetchUserChats,axios } = useAppContext(); // هنسيب الباقي من الكونتكست
 
   const handleSubmit = async (e) => {
     e.preventDefault();
